@@ -5,59 +5,66 @@ class Cheque(val valor: Double) {
 
   def humanize():String = {
     val parteInteira = valor.toInt
-    val parteFracionaria = BigDecimal(valor).remainder(parteInteira)
-    var centavos = ""
-    if(parteFracionaria > 0) {
-      var valorCentavos = parteFracionaria.toString.substring(2).toInt
-      if(valorCentavos <  10){
-        valorCentavos *= 10
-      }
-      centavos = " e " + humanize(valorCentavos.toInt) + " centavos"
+    val reais = if(parteInteira > 0){
+      humanize(parteInteira) + " reais"
+    } else {
+      ""
     }
-    humanize(parteInteira) + " reais" + centavos
+    val parteFracionaria = BigDecimal(valor).remainder(parteInteira) * 100
+    val centavos = if (parteFracionaria > 0) {
+      " e " + humanize(parteFracionaria.toInt) + " centavos"
+    } else {
+      ""
+    }
+    reais + centavos
   }
 
   private def humanize(valorEntrada: Int): String = {
-    var resultado = Array[String]()
+    val tamanho = valorEntrada.toString.length
 
-    val parteDezena = valorEntrada % 100
-    if(parteDezena > 0) {
-      resultado +:= humanizedDezena(parteDezena)
+    if(tamanho <= 2) {
+      return humanizedDezena(valorEntrada)
     }
 
-    val parteCentena = (valorEntrada % 1000) - parteDezena
-    if(parteCentena > 0) {
-      if (parteCentena == 100 && resultado.length == 0) {
-        resultado +:= "cem"
-      } else {
-        resultado +:= numbers.get(parteCentena.toInt).get
-      }
+    if(tamanho == 3) {
+      return humanizedCentena(valorEntrada)
     }
 
-    if(valorEntrada >= 1000) {
+    if(tamanho >= 4) {
       val parteMilhar = valorEntrada / 1000
-      if(parteMilhar != 1) {
-        resultado +:= humanize(parteMilhar) + " mil"
+      val parteCentena = valorEntrada % 1000
+      val humanizedMilhar = parteMilhar match {
+        case 1 => "mil"
+        case _ => humanize(parteMilhar) + " mil"
+      }
+      if(parteCentena > 0){
+        return humanizedMilhar + " e " + humanizedCentena(parteCentena)
       }else {
-        resultado +:=  "mil"
+        return humanizedMilhar
       }
     }
+    ""
+  }
 
-    resultado.mkString(" e ")
+  private def humanizedCentena(valor: Double): String = {
+    val parteDezena = valor % 100
+    val parteCentena = valor - parteDezena
+    if (valor == 100 && parteDezena == 0) {
+      return "cem"
+    } else {
+      return Array(numbers.get(parteCentena.toInt).get," e ",humanizedDezena(parteDezena)).mkString
+    }
   }
 
   private def humanizedDezena(valor: Double): String = {
-    if(valor <= 20){
+    if(valor <= 20 || (valor % 10) == 0 ){
       numbers.get(valor.toInt).get
     }else{
       val parteDezena = valor - (valor % 10);
       val parteUnidade = valor % 10;
       val humanizedDezena = numbers.get(parteDezena.toInt).get
-      val humanizedUnidade = numbers.get(parteUnidade.toInt) match {
-        case n: Some[String] => s" e ${n.get}"
-        case _ => ""
-      }
-      humanizedDezena + humanizedUnidade
+      val humanizedUnidade = numbers.get(parteUnidade.toInt).get
+      humanizedDezena + " e " + humanizedUnidade
     }
   }
 
@@ -108,4 +115,3 @@ object Cheque {
   implicit def doubleToCheque(valor:Double) = Cheque(valor)
   implicit def intToCheque(valor:Int) = Cheque(valor.toDouble)
 }
-

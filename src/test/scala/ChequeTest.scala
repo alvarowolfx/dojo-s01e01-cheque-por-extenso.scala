@@ -41,8 +41,13 @@ class ChequeTest extends FlatSpec with Matchers{
   }
 
   it should "return dois reais e trinta e dois centavos when pass 2.32" in {
-    val cheque232eais = Cheque(2.32d)
-    cheque232eais.humanize should be ("dois reais e trinta e dois centavos")
+    val cheque232reais = Cheque(2.32)
+    cheque232reais.humanize should be ("dois reais e trinta e dois centavos")
+  }
+
+  it should "return tres reais e dois centavos when pass 3.02" in {
+    val cheque302reais = Cheque(3.02)
+    cheque302reais.humanize should be ("tres reais e dois centavos")
   }
 
   it should "be able to convert a number straight to the extensive representation" in {
