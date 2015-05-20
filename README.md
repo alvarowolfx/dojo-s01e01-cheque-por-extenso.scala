@@ -1,4 +1,4 @@
-# Dojo DevMT S01E01 (Versão em Scala)
+# Dojo DevMT S01E01 (Versão em Scala) [![Build Status](https://travis-ci.org/alvarowolfx/dojo-s01e01-cheque-por-extenso.scala.svg?branch=master)](https://travis-ci.org/alvarowolfx/dojo-s01e01-cheque-por-extenso.scala)
 #### Versão original desenvolvida em C#. [Disponivel aqui](https://github.com/devmatogrosso/dojo-s01e01-cheque-por-extenso)
 
 ## Data e Local
